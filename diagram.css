@@ -1,0 +1,230 @@
+body {
+	font-family: Arial, sans-serif;
+	background-color: #f0f0f0;
+	margin: 20px;
+	display: flex;
+	justify-content: center;
+}
+
+.main-container {
+	padding: 20px;
+	border-radius: 12px;
+	border: 2px solid #333;
+	background-color: #fff;
+	box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.1);
+	width: 90%;
+	max-width: 1900px;
+}
+
+.main-title {
+	text-align: center;
+	font-size: 24px;
+	font-weight: bold;
+	margin-bottom: 30px;
+	text-decoration: underline;
+	color: #333;
+}
+
+.container {
+	display: grid;
+	gap: 10px;
+	grid-template-columns: repeat(auto-fill, minmax(500px,1fr));
+	padding: 20px;
+	max-width: 2800px;
+	margin: 0 auto;
+	grid-auto-rows: min-content;
+}
+
+.section {
+	padding: 15px;
+	border-radius: 8px;
+	box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+	transistion: border-color 0.3s ease, border-width 0.3s ease;
+	border: 1px solid #000;
+	cursor: pointer;
+}
+
+.section-title {
+	text-align: center;
+	font-weight: bold;
+	margin-bottom: 10px;
+	padding: 5px;
+	color: #000;
+	text-decoration: underline;
+	border-radius: 5px;
+}
+
+.section-content {
+	display: grid;
+	gap: 10px;
+	grid-template-columns: repeat(auto-fit, minmax(140px,1fr));
+}
+
+.section: hover {
+	border-color: #000;
+	border-width: 2px;
+}
+
+.sub-section {
+	margin: 10px 0;
+	padding: 10px;
+	border-radius: 5px;
+	display: flex;
+	flex-direction: column;
+	border: 1px solid #000;
+	transistion: border-color 0.3s ease, border-width: 0.3s ease;
+	cursor: pointer;
+}
+
+.sub-section-title {
+	text-align: center;
+	font-weight: bold;
+	font-size: 16px;
+	margin-bottom: 5px;
+	color: #000;
+}
+
+.sub-section:hover {
+	border-color: #000;
+	border-width: 2px;
+}
+
+.inline-flex {
+	display: flex;
+	justify-content: space-betweeen;
+}
+
+.inline-flex .sub-section {
+	width: 48%
+}
+
+.full-width {
+	grid-column : span 3; /* Adjust as needed to make it span across the entire row */
+}
+
+/* Modal styling */
+.modal {
+	display: none;
+	position: fixed;
+	z-index: 999;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	justify-content: center;
+	align-items: center;
+}
+
+.modal-content {
+	background-color: #fff;
+	padding: 20px;
+	border-radius: 8px;
+	box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.1);
+	width: 500px;
+	text-align: center;
+	position: relative;
+}
+
+.modal-close-x {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	cursor: pointer;
+	font-weight: bold;
+	font-size: 20px;
+}
+
+/* Responsive layout */
+@media(max-width: 1200px) {
+	.container {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* Color schemes */
+/* Purple */
+.purple { background-color: #f3e5f5; }
+.purple .sub-section { background-color: #d1c4e9; }
+.purple .box { background-color: #9575cd; }
+/* Blue */
+.blue { background-color: #e3f2fd; }
+.blue .sub-section { background-color: #90caf9; }
+.blue .box { background-color: #e8f5e9; }
+/* Green */
+.green { background-color: #e8f5e9; }
+.green .sub-section { background-color: #a5d6a7; }
+.green .box { background-color: #4caf50; }
+/* Red */
+.red { background-color: #ffebee; }
+.red .sub-section { background-color: #ef9a9a; }
+.red .box { background-color: #f44336; }
+/* Orange */
+.orange { background-color: #fff3e0; }
+.orange .sub-section { background-color: #ffcc80; }
+.orange .box { background-color: #ff9800; }
+/* Yellow */
+.yellow { background-color: #fffde7; }
+.yellow .sub-section { background-color: #fff59d; }
+.yellow .box { background-color: #ffeb3b; }
+/* Cyan */
+.cyan { background-color: #e0f7fa; }
+.cyan .sub-section { background-color: #80deea; }
+.cyan .box { background-color: #00bcd4; }
+/* Teal */
+.teal { background-color: #e0f2f1; }
+.teal .sub-section { background-color: #80cbc4; }
+.teal .box { background-color: #009688; }
+/* Pink */
+.pink { background-color: #fce4ec; }
+.pink .sub-section { background-color: #f8bbd0; }
+.pink .box { background-color: #e91e63; }
+/* Indigo */
+.indigo { background-color: #e8eaf6; }
+.indigo .sub-section { background-color: #9fa8da; }
+.indigo .box { background-color: #3f51b5; }
+
+/* Dropdown Button */
+.dropbtn {
+	background-color: #3498DB;
+	color: white;
+	padding: 8px;
+	font-size: 16px;
+	border: none;
+	cursor: pointer;
+}
+
+/* Dropdown button on hover & focus */
+.dropbtn:hover, .dropbtn:focus {
+	background-color: #2980B9;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+	position: relative;
+	display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+	display: none;
+	position: absolute;
+	background-color: #f1f1f1;
+	min-width: 160px;
+	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+	color: black;
+	padding: 12px 16px;
+	text-decoration: none;
+	display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #ddd;}
+
+/* Show the dropdown menu .dropdown-content container when the user clicks on the dropdown button) */
+.show {display:block;}
