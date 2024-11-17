@@ -1,30 +1,35 @@
 // Function to fetch data from the JSON API endpoint
 async function fetchCapModel() 
 {
-	const url = 'http://localhost:800/cloud.json';
+	const url = 'http://localhost:8000/json/cloud.json';
+	console.log("fetchCapModel("+url+")");
 	try {
-		// URL should tag on Capmodel
-		const resp = await fetch(url, {
-			headers: { 'Content-Type': 'application/json', }
-		});
+		// URL should tag on Model
+		const resp = await (await fetch(url)).json();
+		//const resp = await fetch(url, {
+		//	headers: { 'Content-Type': 'application/json', }
+		//});
 
 		if (!resp.ok) {
 			throw new Error('HTTP error! status: ${resp.status}');
 		}
 
 		const data = await resp.json();
-		const CapModel = data.record;
+		CapModel = data.record;
 	} catch (error) {
 		console.error("Failed to load data:",error);
 	}
+	console.log(CapModel.length);
 }
 
 // Load the first level sections and recurse
-function LoadSections() {
+function LoadSections() 
+{
+	console.log("LoadSections()");
 
 	// Stage some colornames from the map
 	var cnames=[];
-	let idx=0;
+	var idx=0;
 	for (var key in colorMap) {
 		cnames[idx]=key;	
 		idx++;
@@ -32,23 +37,64 @@ function LoadSections() {
 
 	// Append all sections dynamically to the container
 	const sContainer = document.getElementById('sections-container');
+
 	if (typeof CapModel !== 'undefined') {
 		let idx = 0;
-		CapModel.forEach(sData => 
-		{
+		CapModel.forEach(sData => {
 			if (Mode === 0) {
 				color=cnames[idx];
 				if (idx++ >= cnames.length-1) {
 					idx=0;
 				}
 			} else {
-				//color=sData.Maturity
-				color="white";
+				if (sData.SubSections) {
+					color="white";
+				} else {
+					color=sData.Maturity
+				}
 			}
 			const section = createSection(sData,1,color);
 			sContainer.appendChild(section);
 		});
 	}
+}
+
+// Function to create and append section HTML elements dynamically
+function createSection(sData,lvl,color) 
+{
+	//console.log("createSection(\""+sData.Title+"\","+lvl+","+color+")");
+	if (lvl === 1) {
+		sName="section";
+		sTitle="section-title";
+	} else {
+		sName="sub-section";
+		sTitle="sub-section-title";
+	}
+	const section = document.createElement('div');
+
+	section.classList.add(sName,color);
+	section.innerHTML = `<div class=sTitle>${sData.Title}</div>`;
+
+	section.addEventListener('click', (event) => {
+		if (lvl !== 1) { event.stopPropagation(); }
+		openModal(sData.Title,sData.Description, sData.EA);
+	});
+
+	if (sData.SubSections && lvl < Depth) {
+		const subContainer = document.createElement('div');
+
+		sData.SubSections.forEach(subSData => {
+			if (Mode !== 0) {
+				// Could use lvl Multiplier on color !!
+				color = subSData.Maturity;
+			}
+
+			const SubSection = createSection(subSData,lvl+1,color);
+			subContainer.appendChild(SubSection);
+		});
+		section.appendChild(subContainer);
+	}
+	return section;
 }
 
 function applyFullWidthClass() 
@@ -70,61 +116,27 @@ function applyFullWidthClass()
 	});
 }
 
-// Function to create and append section HTML elements dynamically
-function createSection(sData,lvl,color) 
-{
-	console.log("createSection(\""+sData.Title+"\","+lvl+","+color+")");
-	if (lvl === 1) {
-		sName="section";
-		sTitle="section-title";
-	} else {
-		sName="sub-section";
-		sTitle="sub-section-title";
-	}
-	const section = document.createElement('div');
-
-	section.classList.add(sName,color);
-	section.innerHTML = `<div class=sTitle>${sData.Title}</div>`;
-
-	section.addEventListener('click', (event) => {
-		if (lvl !== 1) { event.stopPropagation(); }
-		openModal(sData.Title,sData.Description);
-	});
-
-	if (sData.subSections && lvl < Depth) {
-		const subContainer = document.createElement('div');
-
-		sData.subSections.forEach(subSData => {
-			if (Mode !== 0) {
-				// Could use lvl Multiplier on color !!
-				color = subSData.Maturity;
-			}
-
-			const subSection = createSection(subSData,lvl+1,color);
-			subContainer.appendChild(subSection);
-		});
-		section.appendChild(subContainer);
-	}
-	return section;
-}
-
 // Function to open the modal with the title, descriptions and optionally L4's
-function openModal(title, description, subSections = null, parentColor = null) 
+function openModal(title, description, ea, SubSections = null, parentColor = null) 
 {
 	const modalTitle = document.getElementById('modal-title');
 	const modalDescription = document.getElementById('modal-description');
+	const modalArchitect = document.getElementById('modal-architect');
 	const modal = document.getElementById('modal');
-console.log("openModal()");
+//console.log("openModal()");
 		
 	modalTitle.textContent = title;
 	modalDescription.textContent = description;
+	if (ea !== undefined) {
+		modalArchitect.textContent = "EA: "+ea;
+	}
 
 	// Clear any existing L4 boxes
 	const existingL4Container = document.querySelector('.l4-container');
 	if (existingL4Container) { existingL4Container.remove(); }
 
-	// If L4 subSections exist, create a container for them and append boxes
-	if (subSections) {
+	// If L4 SubSections exist, create a container for them and append boxes
+	if (SubSections) {
 		const l4Container = document.createElement('div');
 		l4Container.classList.add('l4-container');
 		l4Container.style.display = 'flex';
@@ -134,7 +146,7 @@ console.log("openModal()");
 	
 		const hexParentColor = colorNameToHex(parentColor);
 
-		subSections.forEach(l4Data => {
+		SubSections.forEach(l4Data => {
 			const l4Box = document.createElement('div');
 
 			l4Box.classList.add('box');
@@ -170,23 +182,6 @@ window.addEventListener('click',(event) =>
 	}
 });
 
-window.addEventListener('load', function() 
-{
-	// wait until the page loads before working with HTML elements
-	document.addEventListener('click', function(event) {
-
-		//click listener on the document
-		document.querySelectorAll('.dropdown-content').forEach(function(el) {
-			if (el !== event.target) el.classList.remove('show')
-			// close any showing dropdown that isn't the one just clicked
-		});
-		if (event.target.matches('.dropbtn')) {
-			event.target.closest('.dropdown').querySelector('.dropdown-content').classList.toggle('show')
-		}
-		// if this is a dropdown button being clicked, toggle the show class
-	})
-})
-
 // Function to convert named CSS colors to hex
 function colorNameToHex(color) { return colorMap[color.toLowerCase()]||color; }
 
@@ -209,6 +204,48 @@ function darkenColor(color, percent)
 		.slice(1)}`;
 }
 
+function updateURL(el,mode) 
+{
+	switch(mode) {
+	case "Depth":
+		Depth = el.target.value;
+		break;
+	case "Mode":
+		Mode = el.target.value;
+		break;
+	case "Model":
+		Model = el.target.value;
+		break;
+	}
+	window.location.href = 
+		(window.location.href.split('?')[0]) + 
+			"?Model="+Model+
+			"&Mode="+Mode+
+			"&Depth="+Depth;
+	window.location.replace();
+}
+
+function setSelectValue (id, val) {
+	document.getElementById(id).value = val;
+}
+
+function safeJsonParse(json, reviver) {
+    function defaultReviver(key, value) {
+        if (value.match(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/)) {
+            return new Date(value);
+        }
+
+        if(typeof value === 'undefined') { return null; }
+        if(reviver !== undefined) { reviver(); }
+    }
+
+    try {
+        let json = JSON.parse(json, defaultReviver);
+    } catch(e) {
+        return null;
+    }
+}
+
 // Add as meany Colors as you want
 const colorMap = {
 	"purple": 	"#9c27b0",
@@ -224,16 +261,28 @@ const colorMap = {
 };
 
 // Pick up optional parameters or sensible defaults
-var Mode = Number(new URLSearchParams(window.location.search).get('Mode'));
-var Capmodel = new URLSearchParams(window.location.search).get('Model');
+var Model = new URLSearchParams(window.location.search).get('Model');
 var Depth = Number(new URLSearchParams(window.location.search).get('Depth'));
-if (Mode === null || Mode === 0) { Mode=0; }
-if (Capmodel === null) { Capmodel="CyberSecurity"; }
-if (Depth === null || Depth === 0) { Depth=9; }
+var Mode = Number(new URLSearchParams(window.location.search).get('Mode'));
+
+if (Model === null) { Model="CyberSecurity"; }
+if (Mode === null || Mode === 0) { Mode=0; } 
+if (Depth === null || Depth === 0) { Depth=9; } 
+
+console.log("Model: "+Model+", Depth: "+Depth+", Mode: "+Mode);
+// Show the selected or parsed options in the dropdowns
+setSelectValue('Model',Model);
+setSelectValue('Mode',Mode);
+setSelectValue('Depth',Depth);
+
+document.getElementById("Depth").onchange=function(e){ updateURL(e,"Depth"); }
+document.getElementById("Mode").onchange=function(e){ updateURL(e,"Mode"); }
+document.getElementById("Model").onchange=function(e){ updateURL(e,"Model"); }
+
 
 // Set the page title
 const tdiv = document.getElementsByClassName('main-title')[0];
-tdiv.innerHTML=Capmodel+" Architecture Capabilities";
+tdiv.innerHTML=Model+" Architecture Capabilities";
 	
 window.addEventListener('resize', applyFullWidthClass);
 document.addEventListener('DOMContentLoaded',applyFullWidthClass);
@@ -241,6 +290,5 @@ document.addEventListener('DOMContentLoaded',applyFullWidthClass);
 // Call the fetch function on DOMContentLoaded
 if (typeof CapModel === 'undefined') {
 	document.addEventListener('DOMContentLoaded', fetchCapModel);
-} else {
-	LoadSections();
-}
+} 
+LoadSections();

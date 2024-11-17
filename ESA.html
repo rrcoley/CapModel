@@ -10,37 +10,26 @@
 
 <body>
 	<div class="main-container">
-		<div class="dropdown">
-  			<a href='#' class="dropbtn">Capability Model</a>
-  			<div class="dropdown-content">
-    				<a href="?Model=CyberSecurity">CyberSecurity</a>
-    				<a href="?Model=Cloud">Cloud</a>
-    				<a href="?Model=Infrastructure">Infrastructure</a>
-  			</div>
-		</div>
-
-		<div class="dropdown">
-  			<a href='#' class="dropbtn">Depth</a>
-  			<div class="dropdown-content">
-    				<a href="?Depth=1">Level 1</a>
-    				<a href="?Depth=2">Level 2</a>
-    				<a href="?Depth=3">Level 3</a>
-    				<a href="?Depth=4">Level 4</a>
-    				<a href="?Depth=5">Level 5</a>
-    				<a href="?Depth=6">Level 6</a>
-    				<a href="?Depth=7">Level 7</a>
-    				<a href="?Depth=8">Level 8</a>
-    				<a href="?Depth=9">Level 9</a>
-  			</div>
-		</div>
-
-		<div class="dropdown">
-  			<a href='#' class="dropbtn">Options</a>
-  			<div class="dropdown-content">
-    				<a href="?Mode=0">Default</a>
-    				<a href="?Mode=1">Maturity</a>
-  			</div>
-		</div>
+		<select id="Model">
+			<option value="CyberSecurity">CyberSecurity</option>
+			<option value="Cloud">Cloud</option>
+			<option value="Infrastructure">Infrastructure</option>
+		</select>
+		<select id="Depth">
+			<option value="1">Level 1</option>
+			<option value="2">Level 2</option>
+			<option value="3">Level 3</option>
+			<option value="4">Level 4</option>
+			<option value="5">Level 5</option>
+			<option value="6">Level 6</option>
+			<option value="7">Level 7</option>
+			<option value="8">Level 8</option>
+			<option value="9">Level 9</option>
+		</select>
+		<select id="Mode">
+			<option value="0">Capabilities</option>
+			<option value="1">Maturity</option>
+		</select>
 
 
 		<!-- Main Title -->
@@ -55,12 +44,13 @@
 				<span class="modal-close-x" id="modal-close-x">&times;</span>
 				<div id="modal-title"></div>
 				<div id="modal-description"></div>
+				<div id="modal-architect"></div>
 			</div>
 		</div>
 	</div>
 
 	<!-- Use local FS for testing, comment this out webserver hosting json -->
-	<script type="text/javascript" src="./json/Caps-cyber.js"></script> 
+	<!--- <script type="text/javascript" src="./json/Caps-cloud.json"></script> -->
 
 	<script type="text/javascript" src="./diagram.js"></script>
 
