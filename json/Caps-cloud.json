@@ -1,4 +1,5 @@
-[
+//:set ts=4
+CapModel = [
 		{ 
 			"Title": "End User Compute and Business Applications",
 			"Description": "End User compute description",
@@ -54,4 +55,4 @@
 				}
 			]
 		}
-]
+	]

@@ -1,0 +1,26 @@
+CapModel = [
+		{ 
+			"Title": "End User Compute and Business Applications",
+			"Maturity": "red",
+			"SubSections": [
+				{
+					"Title": "First",
+					"Maturity": "green"
+				}
+			]
+		},
+		{ 
+			"Title": "Event and Messaging",
+			"Maturity": "green",
+			"SubSections": [
+				{
+					"Title": "Second",
+					"Maturity": "red"
+				},
+				{
+					"Title": "Third",
+					"Maturity": "green"
+				}
+			]
+		}
+	]

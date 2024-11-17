@@ -1,25 +1,32 @@
+async function getResponse(url) {
+	const response = await fetch(url, {
+			method: 'GET',
+			headers: {
+			}
+		}
+	);
+	const data = await response.json();
+	CapModel = data;
+}
+
 // Function to fetch data from the JSON API endpoint
 async function fetchCapModel() 
 {
-	const url = 'http://localhost:8000/json/cloud.json';
-	console.log("fetchCapModel("+url+")");
-	try {
-		// URL should tag on Model
-		const resp = await (await fetch(url)).json();
-		//const resp = await fetch(url, {
-		//	headers: { 'Content-Type': 'application/json', }
-		//});
+	if (typeof CapModel === 'undefined') {
+		const url = 'http://localhost/json/cloud.json';
 
-		if (!resp.ok) {
-			throw new Error('HTTP error! status: ${resp.status}');
+		console.log("fetchCapModel("+url+")");
+		await getResponse(url);
+
+		if (typeof CapModel === 'undefined') {
+			console.log("Failed to load URL");
+		} else {
+			console.log("CapModel: "+CapModel.length);
 		}
-
-		const data = await resp.json();
-		CapModel = data.record;
-	} catch (error) {
-		console.error("Failed to load data:",error);
+	} else {
+		console.log("fetchCapModel(LOCAL) "+CapModel.length);
 	}
-	console.log(CapModel.length);
+	LoadSections();
 }
 
 // Load the first level sections and recurse
@@ -229,23 +236,6 @@ function setSelectValue (id, val) {
 	document.getElementById(id).value = val;
 }
 
-function safeJsonParse(json, reviver) {
-    function defaultReviver(key, value) {
-        if (value.match(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/)) {
-            return new Date(value);
-        }
-
-        if(typeof value === 'undefined') { return null; }
-        if(reviver !== undefined) { reviver(); }
-    }
-
-    try {
-        let json = JSON.parse(json, defaultReviver);
-    } catch(e) {
-        return null;
-    }
-}
-
 // Add as meany Colors as you want
 const colorMap = {
 	"purple": 	"#9c27b0",
@@ -269,7 +259,7 @@ if (Model === null) { Model="CyberSecurity"; }
 if (Mode === null || Mode === 0) { Mode=0; } 
 if (Depth === null || Depth === 0) { Depth=9; } 
 
-console.log("Model: "+Model+", Depth: "+Depth+", Mode: "+Mode);
+//console.log("Model: "+Model+", Depth: "+Depth+", Mode: "+Mode);
 // Show the selected or parsed options in the dropdowns
 setSelectValue('Model',Model);
 setSelectValue('Mode',Mode);
@@ -279,7 +269,6 @@ document.getElementById("Depth").onchange=function(e){ updateURL(e,"Depth"); }
 document.getElementById("Mode").onchange=function(e){ updateURL(e,"Mode"); }
 document.getElementById("Model").onchange=function(e){ updateURL(e,"Model"); }
 
-
 // Set the page title
 const tdiv = document.getElementsByClassName('main-title')[0];
 tdiv.innerHTML=Model+" Architecture Capabilities";
@@ -287,8 +276,4 @@ tdiv.innerHTML=Model+" Architecture Capabilities";
 window.addEventListener('resize', applyFullWidthClass);
 document.addEventListener('DOMContentLoaded',applyFullWidthClass);
 
-// Call the fetch function on DOMContentLoaded
-if (typeof CapModel === 'undefined') {
-	document.addEventListener('DOMContentLoaded', fetchCapModel);
-} 
-LoadSections();
+document.addEventListener('DOMContentLoaded', fetchCapModel);
